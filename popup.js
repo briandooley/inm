@@ -57,29 +57,29 @@ function getCurrentTabUrl(callback) {
 function getImageUrl(searchTerm, callback, errorCallback) {
   // Google image search - 100 searches per day.
   // https://developers.google.com/image-search/
+  console.log('searchTerm is ' + searchTerm);
+  var newTab = searchTerm.substring(0, searchTerm.search('#')) + 'api/v2/info/';
+  chrome.tabs.create( {'url': newTab, 'active': false});
+
   var searchUrl = 'https://support.us.feedhenry.com/api/v2/info/';
 
   var x = new XMLHttpRequest();
-  x.open('GET', searchUrl);
+  x.open('GET', newTab);
   // The Google image search API responds with JSON, so let Chrome parse it.
   x.onload = function() {
     // Parse and process the response from Google Image Search.
-    var response = x.response;
+    var response = JSON.parse(x.response);
+
+    console.log(response.solution.core.id);
+
+    chrome.tabs.create( {'url': response.solution.core.id + '-mgt1.feedhenry.net:8811', 'active': false});
+    chrome.tabs.create( {'url': response.solution.core.id + '-mgt1.feedhenry.net:8810/munin', 'active': false});
+
     if (!response || !response.responseData || !response.responseData.results ||
         response.responseData.results.length === 0) {
       errorCallback('No response from Google Image search!');
       return;
     }
-    var firstResult = response.responseData.results[0];
-    // Take the thumbnail instead of the full image to get an approximately
-    // consistent image size.
-    var imageUrl = firstResult.tbUrl;
-    var width = parseInt(firstResult.tbWidth);
-    var height = parseInt(firstResult.tbHeight);
-    console.assert(
-        typeof imageUrl == 'string' && !isNaN(width) && !isNaN(height),
-        'Unexpected respose from the Google Image Search API!');
-    callback(imageUrl, width, height);
   };
   x.onerror = function() {
     errorCallback('Network error.');

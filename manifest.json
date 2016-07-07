@@ -1,15 +1,34 @@
 {
-  "manifest_version": 2,
-
   "name": "INM",
-  "description": "Open Info, Nagios and Munin tabs.",
   "version": "1.0",
-
-  "page_action": {
-    "default_icon": "inm.png",
-    "default_popup": "popup.html"
+  "description": "Open Info, Nagios & Munin",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
   },
- "permissions": [
+  "commands": {
+    "_execute_page_action": {
+        "suggested_key": {
+          "default": "Ctrl+Shift+E",
+          "windows": "Alt+Shift+P",
+          "mac": "Command+I"
+        }
+      }    
+  },
+  "page_action" :
+  {
+    "default_icon" : "inm-19.png",
+    "default_title" : "Open Info, Nagios & Munin"
+  },
+  "permissions" : [
+    "declarativeContent",
+    "tabs",
     "https://*/api/v2/info/"
-  ]
+  ],
+  "icons" : {
+    "48" : "inm-48.png",
+    "128" : "inm-128.png"
+  },
+
+  "manifest_version": 2
 }
